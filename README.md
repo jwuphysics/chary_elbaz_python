@@ -1,8 +1,8 @@
 # A python version of the Chary & Elbaz (2001) code
 
-All files in the directory `chary_elbaz1` are credited to [Chary & Elbaz (2001, ApJ, 556, 562)](http://adsabs.harvard.edu/abs/2001ApJ...556..562C). If you use this code you should cite their paper.
+All files in the directory `chary_elbaz` are from [Chary & Elbaz (2001, ApJ, 556, 562)](http://adsabs.harvard.edu/abs/2001ApJ...556..562C). If you use this code you should cite their paper.
 
-This code is a simple port of their IDL script for converting far-infrared flux densities to total infrared luminosities (8-1000 micron). I use the `simps` integration method from SciPy, which slightly differs from the `INT_TABULATED` integration routine in IDL. In my own usage, I've found differences of about 0.03% between the IDL and python results.
+This code is a simple python port of their IDL script for converting far-infrared flux density to total infrared luminosity (8-1000 micron). I use the `simps` integration method from SciPy, which slightly differs from the `INT_TABULATED` integration routine in IDL. In my own usage, I've found differences of about 0.03% between the two.
 
 An example of how to use this code:
 
