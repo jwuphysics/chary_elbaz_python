@@ -49,7 +49,7 @@ def fit_SED(z, S_nu, wavelength, H0=70., Om0=0.3, resolution=3., use_IRAS=True):
     H0 (float)         : Hubble constant; defaults to 70 km s^-1 Mpc^-1
     Om0 (float)        : matter density; defaults to 0.3
     resolution (float) : instrument spectral resolution; defaults to 3.
-    Sanders_LIR (bool) : return Sanders L_IR (see Chary & Elbaz 2001 
+    use_IRAS (bool)    : return Sanders L_IR (see Chary & Elbaz 2001 
                          eq. 1) or otherwise the true L_IR ; defaults 
                          to True.
 
@@ -69,13 +69,13 @@ def fit_SED(z, S_nu, wavelength, H0=70., Om0=0.3, resolution=3., use_IRAS=True):
     D_L = cosmo.luminosity_distance(z).value   # Mpc
 
     # read in wavelengths and redshift them
-    # shape : (1366,)
     wavelengths = ce['lambda']
+    assert wavelengths.shape == (1366,)
     wavelengths_observed = wavelengths * (1 + z)
 
     # read in templates, redshift, and convert to flux density
-    # shape : (1366, 105)
     SEDs = ce['nuLnuinLsun'] 
+    assert SEDs.shape == (1366, 105)
     SEDs_observed = np.array([(1 + z) * f / (1e-32 * 4 * np.pi * 
         (D_L * 3.0856e22)**2 * (3e14 / wavelengths) / 3.826e26) \
         for f in SEDs.T]).T
@@ -86,10 +86,10 @@ def fit_SED(z, S_nu, wavelength, H0=70., Om0=0.3, resolution=3., use_IRAS=True):
 
 
     # convert templates into what the instrument sees
-    # shape : (105,)
     SEDs_instrument = np.mean(SEDs_observed[(wavelengths_observed > wavemin) &
                                             (wavelengths_observed < wavemax)],
                               axis = 0)
+    assert SEDs_instrument.shape == (105,)
 
     # index of best match
     ind = np.argmin(np.abs(S_nu - SEDs_instrument))
@@ -98,8 +98,8 @@ def fit_SED(z, S_nu, wavelength, H0=70., Om0=0.3, resolution=3., use_IRAS=True):
     if use_IRAS == False: 
         L_IR = ce['LIR_Sanders'][ind]
     else:
-        # shape : (1366,)
         flux_densities = SEDs_observed[:, ind] * S_nu / SEDs_instrument[ind]
+        assert flux_densities.shape == (1366,)
 
         # used for calculating L_IR (Sanders & Mirabel 1996)
         f_12  = iras(12,  wavelengths, flux_densities / (1 + z))
@@ -122,7 +122,6 @@ def iras(iras_filter, wavelengths, flux_densities):
     iras_filter (int)      : the wavelength of the IRAS filter; must be 12, 
                              25, 60, or 100 (microns)
     wavelengths (array)    : the wavelengths in microns (1366,)
-
     flux_densities (array) : the flux densities in uJy (1366,)
 
     Returns
@@ -136,7 +135,6 @@ def iras(iras_filter, wavelengths, flux_densities):
         import sys
         sys.exit('Enter a valid IRAS filter.')
 
-    # shape : (21,)
     iras_wave, iras_resp = \
         np.genfromtxt(CHARY_ELBAZ_DIR + 'iras{}.txt'.format(str(iras_filter)),
                       skip_header=3, unpack=True)
