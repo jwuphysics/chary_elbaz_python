@@ -17,5 +17,6 @@ import astropy.units as u
 L_IR = ce.fit_SED(z=1, S_nu=3500*u.uJy, wavelength=160*u.um)
 
 print(L_IR * 1e-10) 
+# 16.1544513536
 ```
 We see that the fit infrared luminosity is 16.2e10 solar luminosities. Note that the returned quantity has no explicit units.
